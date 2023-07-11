@@ -43,3 +43,12 @@ def badFix(arr,bad=None):
     fixed[bad]=np.nanmean(fixed)
     return(fixed)
 
+def freqScale(dspec, freq, fd, fref):
+    CS = np.fft.fftshift(np.fft.fft(dspec, axis=1), axes=1)
+    for i in range(freq.shape[0]):
+        interp = interp1d(
+            (fd * (fref / freq[i])).value, CS[i, :], bounds_error=False, fill_value=0
+        )
+        CS[i, :] = interp(fd.value)
+    CS = np.fft.fftshift(np.fft.fft(CS, axis=0), axes=0)
+    return CS
